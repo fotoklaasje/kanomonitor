@@ -21,6 +21,7 @@
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 # WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 # IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+#testje1
 import sys
 import asyncio
 import argparse
@@ -32,8 +33,8 @@ maclijst = [] #macs in de database
 def lees_maclijst():
     #lees de lijst met macs uit de database
     print ("maclijst lezen")
-    maclijst.append('6e:93:a3:36:63:7c')
-    maclijst.append('56:ab:d5:06:12:87')
+    maclijst.append("6e:93:a3:36:63:7c")
+    maclijst.append("56:ab:d5:06:12:87")
     print (maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
@@ -61,8 +62,6 @@ def my_process(data):
         for x in mac:
             mac_adres_gevonden = str(x.val)
             print (mac_adres_gevonden)
-            print(type(mac_adres_gevonden))
-            print(type(maclijst[0])
             #kijken of hij in de maclijst staat
             if mac_adres_gevonden in maclijst:
                 #kijken of we hem al hebben gezien
