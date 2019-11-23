@@ -33,8 +33,8 @@ maclijst = [] #macs in de database
 def lees_maclijst():
     #lees de lijst met macs uit de database
     print ("maclijst lezen")
-    maclijst.append("6e:93:a3:36:63:7c")
-    maclijst.append("56:ab:d5:06:12:87")
+    maclijst.append('6e:93:a3:36:63:7c')
+    maclijst.append('56:ab:d5:06:12:87')
     print (maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
