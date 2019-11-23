@@ -28,7 +28,7 @@ import argparse
 import re
 import aioblescan as aiobs
 maclijst = [] #macs in de database
-#kanolijst = [[],[]] # mac, en datetime laatste gezien
+kanolijst = [[],[]] # mac, en datetime laatste gezien
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
@@ -59,20 +59,21 @@ def my_process(data):
     try:
         #print (ev.payload[2].payload[1].payload[3].val)
         mac = ev.retrieve("peer")
-        for gevonden_mac_adres in mac:
+        for x in mac:
+            gevonden_mac_adres = x.val
             print (gevonden_mac_adres)
             #kijken of hij in de maclijst staat
             if gevonden_mac_adres in maclijst:
                 print ("mac gevonden")
                 #kijken of we hem al hebben gezien
-                #if mac_adres_gevonden in kanolijst[1]:
-                #    print ("update datum in kanolijst")
+                if gevonden_mac_adres in kanolijst[1]:
+                    print ("update datum in kanolijst")
                     #vind locatie in lijst
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     #anders update laatste datum
-                #else:
-                #    print ("voeg toe aan kanolijst")
+                else:
+                    print ("voeg toe aan kanolijst")
                     #voeg mac toe aan kanolijst met nu als laatste datum
     except:
         print ("geen payload")
