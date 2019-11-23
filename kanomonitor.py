@@ -70,7 +70,7 @@ def my_process(data):
                 else:
                     print ("voeg toe aan kanolijst")
                     #voeg mac toe aan kanolijst met nu als laatste datum
-     except:
+    except:
         print ("geen payload")
 
 event_loop = asyncio.get_event_loop()
