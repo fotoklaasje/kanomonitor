@@ -30,7 +30,7 @@ import aioblescan as aiobs
 import datetime
 from datetime import datetime
 maclijst = [] #macs in de database
-kanolijst = [[],[]] # mac, en datetime laatste gezien
+kanolijst = [[[],[]]] # mac, en datetime laatste gezien
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
@@ -68,27 +68,27 @@ def my_process(data):
             if gevonden_mac_adres in maclijst:
                 print ("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if gevonden_mac_adres in [elem for sublist in kanolijst for elem in sublist]:
+                if gevonden_mac_adres in [sublist[0] for sublist in kanolijst ]: #[elem for sublist in kanolijst for elem in sublist]:
                     print ("update datum in kanolijst")
                     #vind locatie in lijst
+                    x = 0
+                    while x < len(kanolijst):
+                        if kanolijst[x][0] == gevonden_mac_adres:
+                            plek = x
+                        x = x + 1
+                    print (plek)
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     #anders update laatste datum
                 else:
                     print ("voeg toe aan kanolijst")
-                    #kanolijst.append(["blaat","tjonge"])
-                    #lengte_kanolijst = len(kanolijst)-1
-                    #print (lengte_kanolijst)
                     kanolijst.append([gevonden_mac_adres,datetime.now()])
-                    #plek = kanolijst[0].index(gevonden_mac_adres)
-                    #kanolijst[len(kanolijst)][plek].append("blaat")
                     print ("----")
-                    #print (kanolijst[0][plek])
                     print (kanolijst)
                     print ("----")
                     #voeg mac toe aan kanolijst met nu als laatste datum
-    except:
-        print ("geen payload")
+    except Exception as ex:
+        print (ex)
 
 event_loop = asyncio.get_event_loop()
 
