@@ -27,6 +27,8 @@ import asyncio
 import argparse
 import re
 import aioblescan as aiobs
+import datetime
+from datetime import datetime
 maclijst = [] #macs in de database
 kanolijst = [[],[]] # mac, en datetime laatste gezien
 
@@ -66,7 +68,7 @@ def my_process(data):
             if gevonden_mac_adres in maclijst:
                 print ("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if gevonden_mac_adres in kanolijst[1]:
+                if gevonden_mac_adres in [elem for sublist in kanolijst for elem in sublist]:
                     print ("update datum in kanolijst")
                     #vind locatie in lijst
                     #kijk wanneer laatste datum
@@ -74,6 +76,16 @@ def my_process(data):
                     #anders update laatste datum
                 else:
                     print ("voeg toe aan kanolijst")
+                    #kanolijst.append(["blaat","tjonge"])
+                    #lengte_kanolijst = len(kanolijst)-1
+                    #print (lengte_kanolijst)
+                    kanolijst.append([gevonden_mac_adres,datetime.now()])
+                    #plek = kanolijst[0].index(gevonden_mac_adres)
+                    #kanolijst[len(kanolijst)][plek].append("blaat")
+                    print ("----")
+                    #print (kanolijst[0][plek])
+                    print (kanolijst)
+                    print ("----")
                     #voeg mac toe aan kanolijst met nu als laatste datum
     except:
         print ("geen payload")
@@ -97,6 +109,10 @@ btctrl.process=my_process
 #ook goed om periodiek lijst met MAC's op te halen die geregistreerd moeten worden (zodat niet elke passant in de database beland)
 
 #Probe
+
+#print(datetime.now())
+#kanolijst[0].append("00:00:00:00:00:00")
+#kanolijst[0][1] = datetime.now()
 lees_maclijst()
 btctrl.send_scan_request()
 try:
