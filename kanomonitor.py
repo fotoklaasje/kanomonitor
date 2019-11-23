@@ -66,15 +66,16 @@ def my_process(data):
             print(type(maclijst[0]))
             #kijken of hij in de maclijst staat
             if mac_adres_gevonden in maclijst:
+                print ("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if mac_adres_gevonden in kanolijst[1]:
-                    print ("update datum in kanolijst")
+                #if mac_adres_gevonden in kanolijst[1]:
+                #    print ("update datum in kanolijst")
                     #vind locatie in lijst
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     #anders update laatste datum
-                else:
-                    print ("voeg toe aan kanolijst")
+                #else:
+                #    print ("voeg toe aan kanolijst")
                     #voeg mac toe aan kanolijst met nu als laatste datum
     except:
         print ("geen payload")
