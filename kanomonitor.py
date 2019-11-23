@@ -62,6 +62,8 @@ def my_process(data):
         for x in mac:
             mac_adres_gevonden = str(x.val)
             print (mac_adres_gevonden)
+            print (type(mac_adres_gevonden))
+            print(type(maclijst[0])
             #kijken of hij in de maclijst staat
             if mac_adres_gevonden in maclijst:
                 #kijken of we hem al hebben gezien
