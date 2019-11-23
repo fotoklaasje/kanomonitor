@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
+#!/usr/bin/env python3 -*- coding:utf-8 -*-
 #
 # This application is an example on how to use aioblescan
 #
@@ -71,12 +70,13 @@ def my_process(data):
                 if gevonden_mac_adres in [sublist[0] for sublist in kanolijst ]: #[elem for sublist in kanolijst for elem in sublist]:
                     print ("update datum in kanolijst")
                     #vind locatie in lijst
-                    x = 0
-                    while x < len(kanolijst):
-                        if kanolijst[x][0] == gevonden_mac_adres:
-                            plek = x
-                        x = x + 1
+                    plek = 0
+                    while plek < len(kanolijst):
+                        if kanolijst[plek][0] == gevonden_mac_adres:
+                            break
+                        plek = plek + 1
                     print (plek)
+                    print (kanolijst[plek][0], " , ", kanolijst[plek][1])
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     #anders update laatste datum
