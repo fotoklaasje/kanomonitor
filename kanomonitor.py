@@ -61,7 +61,7 @@ def my_process(data):
         mac = ev.retrieve("peer")
         for x in mac:
             mac_adres_gevonden = str(x.val)
-            print mac_adres_gevonden
+            print (mac_adres_gevonden)
             #kijken of hij in de maclijst staat
             if mac_adres_gevonden in maclijst:
                 #kijken of we hem al hebben gezien
