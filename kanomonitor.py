@@ -60,11 +60,12 @@ def my_process(data):
         #print (ev.payload[2].payload[1].payload[3].val)
         mac = ev.retrieve("peer")
         for x in mac:
-            print(x.val)
+            mac_adres_gevonden = str(x.val)
+            print mac_adres_gevonden
             #kijken of hij in de maclijst staat
-            if x.val in maclijst:
+            if mac_adres_gevonden in maclijst:
                 #kijken of we hem al hebben gezien
-                if x.val in kanolijst[1]:
+                if mac_adres_gevonden in kanolijst[1]:
                     print ("update datum in kanolijst")
                     #vind locatie in lijst
                     #kijk wanneer laatste datum
