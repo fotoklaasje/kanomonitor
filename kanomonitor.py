@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 #
@@ -28,18 +27,19 @@ import argparse
 import re
 import aioblescan as aiobs
 maclijst = [] #macs in de database
-kanolijst = [[],[]] # mac, en datetime laatste gezien
+#kanolijst = [[],[]] # mac, en datetime laatste gezien
 
-def lees_maclijst()
+def lees_maclijst():
     #lees de lijst met macs uit de database
-    
-def vandaaggezien()
+    print ("maclijst lezen")
+
+#def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
 
-def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd)
+#def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
     
-def check_uitgeleend()
+#def check_uitgeleend():
     #twijfelgevalletje? kijk of er kano's zijn die al meer dan 10 min weg zijn, en schrijf dat dan ergens weg zodat live gekeken kan worden wat er nu weg is.
     #misschien dit niet in lokale database opslaan, maar alleen op database op internet? (om sd kaart te ontlasten)
 
@@ -59,16 +59,19 @@ def my_process(data):
         for x in mac:
             print(x.val)
             #kijken of hij in de maclijst staat
-            if x.val in maclijst
+            if x.val in maclijst:
                 #kijken of we hem al hebben gezien
-                if x.val in kanolijst[1]
+                if x.val in kanolijst[1]:
+                    print ("update datum in kanolijst")
                     #vind locatie in lijst
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     #anders update laatste datum
-                else
+                else:
+                    print ("voeg toe aan kanolijst")
                     #voeg mac toe aan kanolijst met nu als laatste datum
-
+     except:
+        print ("geen payload")
 
 event_loop = asyncio.get_event_loop()
 
@@ -89,6 +92,7 @@ btctrl.process=my_process
 #ook goed om periodiek lijst met MAC's op te halen die geregistreerd moeten worden (zodat niet elke passant in de database beland)
 
 #Probe
+lees_maclijst()
 btctrl.send_scan_request()
 try:
     #event_loop.run_until_complete(event_loop.future)
