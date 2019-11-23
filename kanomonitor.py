@@ -64,6 +64,7 @@ def my_process(data):
             print (mac_adres_gevonden)
             print (type(mac_adres_gevonden))
             print(type(maclijst[0]))
+            print (type(x.val))
             #kijken of hij in de maclijst staat
             if mac_adres_gevonden in maclijst:
                 print ("mac gevonden")
