@@ -25,7 +25,7 @@ def lees_maclijst():
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
 
-#def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
+def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
     
 #def check_uitgeleend():
@@ -64,7 +64,14 @@ def my_process(data):
                     logger.debug(kanolijst[plek][0], " , ", kanolijst[plek][1])
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
+                    TijdNu = datetime.now()
+                    if (TijdNu - kanolijst[plek][1]) > timedelta(minutes = 10)
+                        logger.debug("meer dan 10 min geleden")
+                        schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
+                    else
+                        kanolijst[plek][1] = TijdNu
+                        logger.debug("entry update", kanolijst[plek])
                 else:
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst.append([gevonden_mac_adres,datetime.now()])
