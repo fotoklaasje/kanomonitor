@@ -77,6 +77,7 @@ def my_process(data):
                         kanolijst[plek][1] = TijdNu
                         logger.debug("entry update")
                         logger.debug(kanolijst[plek])
+                        logger.debug(TijdNu)
                 else:
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst.append([gevonden_mac_adres,datetime.now()])
