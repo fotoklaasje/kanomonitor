@@ -1,8 +1,26 @@
 #!/usr/bin/env python3 -*- coding:utf-8 -*-
 #
-# gebaseerd op voorbeeldscript voor aioblescan
-
-
+# This application is an example on how to use aioblescan
+#
+# Copyright (c) 2017 François Wautier
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+# of the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+# IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+#testje4
 import sys
 import asyncio
 import argparse
@@ -10,27 +28,19 @@ import re
 import aioblescan as aiobs
 import datetime
 from datetime import datetime
-from datetime import timedelta
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
-kanolijst = [[[],[]]] # mac, en datetime laatste gezien
+kanolijst = [] # mac, en datetime laatste gezien
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
     print ("maclijst lezen")
     maclijst.append("6e:93:a3:36:63:7c")
     maclijst.append("56:ab:d5:06:12:87")
-    logger.debug(maclijst)
+    print (maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
 
-def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
-    logger.debug("leg vast in database, uitgeleend: ")
-    logger.debug(mac_adres)
-    logger.debug(uitleentijd)
-    logger.debug(terugbrengtijd)
+#def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
     
 #def check_uitgeleend():
@@ -52,40 +62,29 @@ def my_process(data):
         mac = ev.retrieve("peer")
         for x in mac:
             gevonden_mac_adres = x.val
-            logger.debug(gevonden_mac_adres)
+            print (gevonden_mac_adres)
             #kijken of hij in de maclijst staat
             if gevonden_mac_adres in maclijst:
-                logger.debug("mac gevonden")
+                print ("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if gevonden_mac_adres in [sublist[0] for sublist in kanolijst ]: #[elem for sublist in kanolijst for elem in sublist]:
-                    logger.debug("update datum in kanolijst")
+                if gevonden_mac_adres in kanolijst[0]:
+                    print ("update datum in kanolijst")
                     #vind locatie in lijst
-                    plek = 0
-                    while plek < len(kanolijst):
-                        if kanolijst[plek][0] == gevonden_mac_adres:
-                            break
-                        plek = plek + 1
-                    logger.debug(plek)
-                    logger.debug(kanolijst[plek][0], " , ", kanolijst[plek][1])
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
-                    TijdNu = datetime.now()
-                    logger.debug("meer dan 10 min geleden")
-                        schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
-                    kanolijst[plek][1] = TijdNu
-                    logger.debug("entry update")
-                    logger.debug(kanolijst[plek])
-                    logger.debug(TijdNu)
                 else:
-                    logger.debug("voeg toe aan kanolijst")
-                    kanolijst.append([gevonden_mac_adres,datetime.now()])
-                    logger.debug("----")
-                    logger.debug(kanolijst)
-                    logger.debug("----")
+                    print ("voeg toe aan kanolijst")
+                    kanolijst[].append(gevonden_mac_adres)
+                    plek = kanolijst[].index(gevonden_mac_adres)
+                    #kanolijst[1][plek].append("blaat")
+                    print ("----")
+                    print (kanolijst[0][plek])
+                    print (kanolijst)
+                    print ("----")
                     #voeg mac toe aan kanolijst met nu als laatste datum
-    except Exception as ex:
-        logger.debug(ex)
+    except:
+        print ("geen payload")
 
 event_loop = asyncio.get_event_loop()
 
@@ -108,17 +107,17 @@ btctrl.process=my_process
 #Probe
 
 #print(datetime.now())
-#kanolijst[0].append("00:00:00:00:00:00")
-#kanolijst[0][1] = datetime.now()
+kanolijst[0].append("00:00:00:00:00:00")
+kanolijst[0][1] = datetime.now()
 lees_maclijst()
 btctrl.send_scan_request()
 try:
     #event_loop.run_until_complete(event_loop.future)
     event_loop.run_forever()
 except KeyboardInterrupt:
-    logger.debug('keyboard interrupt')
+    print('keyboard interrupt')
 finally:
-    logger.debug('closing event loop')
+    print('closing event loop')
     btctrl.stop_scan_request()
     command = aiobs.HCI_Cmd_LE_Advertise(enable=False)
     btctrl.send_command(command)
