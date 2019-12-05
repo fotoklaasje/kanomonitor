@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
-kanolijst = {} # mac, en datetime laatste gezien - Ik zou het eigenlijk moeten herschrijven met die als dictionary
+kanolijst = {} # mac, en datetime laatste gezien
 UitleenMinimum = timedelta(minutes=1)
 
 def lees_maclijst():
@@ -58,7 +58,7 @@ def my_process(data):
         mac = ev.retrieve("peer")
         for x in mac:
             gevonden_mac_adres = x.val
-            logger.debug(gevonden_mac_adres)
+            #logger.debug(gevonden_mac_adres)
             #kijken of hij in de maclijst staat
             if gevonden_mac_adres in maclijst:
                 logger.debug("mac gevonden")
