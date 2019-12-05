@@ -70,7 +70,7 @@ def my_process(data):
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     TijdNu = datetime.now()
-logger.debug("meer dan 10 min geleden")
+                    logger.debug("meer dan 10 min geleden")
                         schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
                     kanolijst[plek][1] = TijdNu
