@@ -22,10 +22,12 @@ UitleenMinimum = timedelta(minutes=1)
 def lees_maclijst():
     #lees de lijst met macs uit de database
     logging.debug("maclijst lezen")
-    maclijst.append("6e:93:a3:36:63:7c")
-    maclijst.append("56:ab:d5:06:12:87")
-    maclijst.append("42:0b:26:63:9b:2e")
-    maclijst.append("64:17:37:cd:10:f3")
+    #maclijst.append("6e:93:a3:36:63:7c")
+    #maclijst.append("56:ab:d5:06:12:87")
+    #maclijst.append("42:0b:26:63:9b:2e")
+    #maclijst.append("64:17:37:cd:10:f3")
+    #maclijst.append("73:8b:4a:21:85:d9")
+    maclijst.append("f0:99:19:4b:28:81")
     logger.debug(maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
@@ -56,7 +58,7 @@ def my_process(data):
         mac = ev.retrieve("peer")
         for x in mac:
             gevonden_mac_adres = x.val
-            logger.debug(gevonden_mac_adres)
+            #logger.debug(gevonden_mac_adres)
             #kijken of hij in de maclijst staat
             if gevonden_mac_adres in maclijst:
                 logger.debug("mac gevonden")
@@ -76,9 +78,9 @@ def my_process(data):
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     TijdNu = datetime.now()
-                    #if TijdNu - kanolijst[plek][1] > UitleenMinimum
-                    #    logger.debug("meer dan 10 min geleden")
-                    #    schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
+                    if TijdNu - kanolijst[plek][1] > UitleenMinimum:
+                        logger.debug("meer dan 10 min/uitleenminimum geleden")
+                        schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
                     kanolijst[plek][1] = TijdNu
                     logger.debug("entry update")
