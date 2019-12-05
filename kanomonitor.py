@@ -63,7 +63,7 @@ def my_process(data):
             if gevonden_mac_adres in maclijst:
                 logger.debug("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if gevonden_mac_adres in kanolijst 
+                if gevonden_mac_adres in kanolijst: 
                     #logger.debug("update datum in kanolijst")
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
