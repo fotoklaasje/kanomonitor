@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
-kanolijst = {} # mac, en datetime laatste gezien
+kanolijst = {} #dictionary mac als key, en datetime laatste gezien
 UitleenMinimum = timedelta(minutes=1)
 
 def lees_maclijst():
