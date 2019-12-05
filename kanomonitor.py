@@ -73,11 +73,10 @@ def my_process(data):
                         logger.debug("meer dan 10 min geleden")
                         schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
-                    else
-                        kanolijst[plek][1] = TijdNu
-                        logger.debug("entry update")
-                        logger.debug(kanolijst[plek])
-                        logger.debug(TijdNu)
+                    kanolijst[plek][1] = TijdNu
+                    logger.debug("entry update")
+                    logger.debug(kanolijst[plek])
+                    logger.debug(TijdNu)
                 else:
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst.append([gevonden_mac_adres,datetime.now()])
