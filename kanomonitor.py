@@ -67,15 +67,15 @@ def my_process(data):
                     logger.debug("update datum in kanolijst")
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
-                    #TijdNu = datetime.now()
-                    #if TijdNu - kanolijst[plek][1] > UitleenMinimum:
-                    #    logger.debug("meer dan 10 min/uitleenminimum geleden")
-                    #    schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
-                    #anders update laatste datum
-                    #kanolijst[plek][1] = TijdNu
-                    #logger.debug("entry update")
-                    #logger.debug(kanolijst[plek])
-                    #logger.debug(TijdNu)
+                    TijdNu = datetime.now()
+                    if TijdNu - kanolijst[gevonden_mac_adres] > UitleenMinimum:
+                        logger.debug("meer dan 10 min/uitleenminimum geleden")
+                        schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], TijdNu)
+                    #update laatste datum
+                    kanolijst[gevonden_mac_adres] = TijdNu
+                    logger.debug("entry update")
+                    logger.debug(gevonden_mac_adres)
+                    logger.debug(kanolijst[gevonden_mac_adres])
                 else:
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst[gevonden_mac_adres]=datetime.now()
