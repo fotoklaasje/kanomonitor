@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
-kanolijst = [[[],[]]] # mac, en datetime laatste gezien - Ik zou het eigenlijk moeten herschrijven met die als dictionary
+kanolijst = {} # mac, en datetime laatste gezien - Ik zou het eigenlijk moeten herschrijven met die als dictionary
 UitleenMinimum = timedelta(minutes=1)
 
 def lees_maclijst():
@@ -63,32 +63,22 @@ def my_process(data):
             if gevonden_mac_adres in maclijst:
                 logger.debug("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if gevonden_mac_adres in [sublist[0] for sublist in kanolijst ]: #[elem for sublist in kanolijst for elem in sublist]:
-                    logger.debug("update datum in kanolijst")
-                    #vind locatie in lijst
-                    plek = 0
-                    while plek < len(kanolijst):
-                        if kanolijst[plek][0] == gevonden_mac_adres:
-                            break
-                        plek = plek + 1
-                    logger.debug(plek)
-                    logger.debug(kanolijst[plek][0])
-                    logger.debug(" , ")
-                    logger.debug(kanolijst[plek][1])
+                if gevonden_mac_adres in kanolijst 
+                    #logger.debug("update datum in kanolijst")
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
-                    TijdNu = datetime.now()
-                    if TijdNu - kanolijst[plek][1] > UitleenMinimum:
-                        logger.debug("meer dan 10 min/uitleenminimum geleden")
-                        schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
+                    #TijdNu = datetime.now()
+                    #if TijdNu - kanolijst[plek][1] > UitleenMinimum:
+                    #    logger.debug("meer dan 10 min/uitleenminimum geleden")
+                    #    schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
-                    kanolijst[plek][1] = TijdNu
-                    logger.debug("entry update")
-                    logger.debug(kanolijst[plek])
-                    logger.debug(TijdNu)
+                    #kanolijst[plek][1] = TijdNu
+                    #logger.debug("entry update")
+                    #logger.debug(kanolijst[plek])
+                    #logger.debug(TijdNu)
                 else:
                     logger.debug("voeg toe aan kanolijst")
-                    kanolijst.append([gevonden_mac_adres,datetime.now()])
+                    kanolijst[gevonden_mac_adres]=datetime.now()
                     logger.debug("----")
                     logger.debug(kanolijst)
                     logger.debug("----")
