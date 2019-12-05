@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3 -*- coding:utf-8 -*-
 #
 # gebaseerd op voorbeeldscript voor aioblescan
@@ -16,12 +17,15 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
 kanolijst = [[[],[]]] # mac, en datetime laatste gezien
+UitleenMinimum = timedelta(minutes=1)
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
-    print ("maclijst lezen")
+    logging.debug("maclijst lezen")
     maclijst.append("6e:93:a3:36:63:7c")
     maclijst.append("56:ab:d5:06:12:87")
+    maclijst.append("42:0b:26:63:9b:2e")
+    maclijst.append("64:17:37:cd:10:f3")
     logger.debug(maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
@@ -66,13 +70,15 @@ def my_process(data):
                             break
                         plek = plek + 1
                     logger.debug(plek)
-                    logger.debug(kanolijst[plek][0], " , ", kanolijst[plek][1])
+                    logger.debug(kanolijst[plek][0])
+                    logger.debug(" , ")
+                    logger.debug(kanolijst[plek][1])
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     TijdNu = datetime.now()
-                    if (TijdNu - timedelta(minutes = 10)) > kanolijst[plek][1]
-                        logger.debug("meer dan 10 min geleden")
-                        schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
+                    #if TijdNu - kanolijst[plek][1] > UitleenMinimum
+                    #    logger.debug("meer dan 10 min geleden")
+                    #    schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
                     kanolijst[plek][1] = TijdNu
                     logger.debug("entry update")
