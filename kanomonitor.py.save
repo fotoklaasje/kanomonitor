@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3 -*- coding:utf-8 -*-
 #
 # gebaseerd op voorbeeldscript voor aioblescan
@@ -16,19 +15,13 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
-kanolijst = {} # mac, en datetime laatste gezien - Ik zou het eigenlijk moeten herschrijven met die als dictionary
-UitleenMinimum = timedelta(minutes=1)
+kanolijst = [[[],[]]] # mac, en datetime laatste gezien
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
-    logging.debug("maclijst lezen")
+    print ("maclijst lezen")
     maclijst.append("6e:93:a3:36:63:7c")
     maclijst.append("56:ab:d5:06:12:87")
-    maclijst.append("42:0b:26:63:9b:2e")
-    maclijst.append("64:17:37:cd:10:f3")
-    maclijst.append("73:8b:4a:21:85:d9")
-    maclijst.append("f0:99:19:4b:28:81")
-    maclijst.append("43:7f:a0:26:21:74")
     logger.debug(maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
@@ -55,6 +48,7 @@ def my_process(data):
     # dit moet mooier kunnen met een functie die recursief door de lists naar .name = peer zoekt (inspiratie https://thispointer.com/python-convert-list-of-lists-or-nested-list-to-flat-list/ )
     # onderstaande manier met ev.retrieve werkt eleganter maar bied geen manier om major en minor te lezen
     try:
+        #print (ev.payload[2].payload[1].payload[3].val)
         mac = ev.retrieve("peer")
         for x in mac:
             gevonden_mac_adres = x.val
@@ -63,22 +57,29 @@ def my_process(data):
             if gevonden_mac_adres in maclijst:
                 logger.debug("mac gevonden")
                 #kijken of we hem al hebben gezien
-                if gevonden_mac_adres in kanolijst: 
+                if gevonden_mac_adres in [sublist[0] for sublist in kanolijst ]: #[elem for sublist in kanolijst for elem in sublist]:
                     logger.debug("update datum in kanolijst")
+                    #vind locatie in lijst
+                    plek = 0
+                    while plek < len(kanolijst):
+                        if kanolijst[plek][0] == gevonden_mac_adres:
+                            break
+                        plek = plek + 1
+                    logger.debug(plek)
+                    logger.debug(kanolijst[plek][0], " , ", kanolijst[plek][1])
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
-                    #TijdNu = datetime.now()
-                    #if TijdNu - kanolijst[plek][1] > UitleenMinimum:
-                    #    logger.debug("meer dan 10 min/uitleenminimum geleden")
-                    #    schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
+                    TijdNu = datetime.now()
+                    if (TijdNu - kanolijst[plek][1]) > timedelta(minutes = 10) > kanolijst[plek][1]                        logger.debug("meer dan 10 min geleden")
+                        schrijf_uitgeleend(kanolijst[plek][0], kanolijst[plek][1], TijdNu)
                     #anders update laatste datum
-                    #kanolijst[plek][1] = TijdNu
-                    #logger.debug("entry update")
-                    #logger.debug(kanolijst[plek])
-                    #logger.debug(TijdNu)
+                    kanolijst[plek][1] = TijdNu
+                    logger.debug("entry update")
+                    logger.debug(kanolijst[plek])
+                    logger.debug(TijdNu)
                 else:
                     logger.debug("voeg toe aan kanolijst")
-                    kanolijst[gevonden_mac_adres]=datetime.now()
+                    kanolijst.append([gevonden_mac_adres,datetime.now()])
                     logger.debug("----")
                     logger.debug(kanolijst)
                     logger.debug("----")
