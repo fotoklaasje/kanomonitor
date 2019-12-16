@@ -29,6 +29,7 @@ def lees_maclijst():
     maclijst.append("73:8b:4a:21:85:d9")
     maclijst.append("f0:99:19:4b:28:81")
     maclijst.append("43:7f:a0:26:21:74")
+    maclijst.append("d8:a9:8b:b4:ea:18")
     logger.debug(maclijst)
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
