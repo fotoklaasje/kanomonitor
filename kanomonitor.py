@@ -62,7 +62,7 @@ def my_process(data):
             #logger.debug(gevonden_mac_adres)
             #kijken of hij in de maclijst staat
             if gevonden_mac_adres in maclijst:
-                logger.debug("mac gevonden")
+                #logger.debug("mac gevonden")
                 #kijken of we hem al hebben gezien
                 if gevonden_mac_adres in kanolijst: 
                     #logger.debug("update datum in kanolijst")
@@ -74,9 +74,9 @@ def my_process(data):
                         schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], TijdNu)
                     #update laatste datum
                     kanolijst[gevonden_mac_adres] = TijdNu
-                    logger.debug("entry update")
-                    logger.debug(gevonden_mac_adres)
-                    logger.debug(kanolijst[gevonden_mac_adres])
+                    #logger.debug("entry update")
+                    #logger.debug(gevonden_mac_adres)
+                    #logger.debug(kanolijst[gevonden_mac_adres])
                 else:
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst[gevonden_mac_adres]=datetime.now()
