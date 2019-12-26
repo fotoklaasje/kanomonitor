@@ -13,6 +13,7 @@ import datetime
 from datetime import datetime
 from datetime import timedelta
 import logging
+import sqlite3
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
@@ -22,15 +23,13 @@ UitleenMinimum = timedelta(minutes=1)
 def lees_maclijst():
     #lees de lijst met macs uit de database
     logging.debug("maclijst lezen")
-    maclijst.append("6e:93:a3:36:63:7c")
-    maclijst.append("56:ab:d5:06:12:87")
-    maclijst.append("42:0b:26:63:9b:2e")
-    maclijst.append("64:17:37:cd:10:f3")
-    maclijst.append("73:8b:4a:21:85:d9")
-    maclijst.append("f0:99:19:4b:28:81")
-    maclijst.append("a8:1b:6a:ae:71:9f")
-    maclijst.append("d8:a9:8b:b4:ea:18")
+    conn = sqlite3.connect('kanomonitor.db')
+    cursor = conn.execute('SELECT MAC FROM sensoren')
+    for e in cursor:
+        maclijst.append(e[0])
     logger.debug(maclijst)
+
+
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
 
@@ -74,9 +73,9 @@ def my_process(data):
                         schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], TijdNu)
                     #update laatste datum
                     kanolijst[gevonden_mac_adres] = TijdNu
-                    #logger.debug("entry update")
-                    #logger.debug(gevonden_mac_adres)
-                    #logger.debug(kanolijst[gevonden_mac_adres])
+                    logger.debug("entry update")
+                    logger.debug(gevonden_mac_adres)
+                    logger.debug(kanolijst[gevonden_mac_adres])
                 else:
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst[gevonden_mac_adres]=datetime.now()
