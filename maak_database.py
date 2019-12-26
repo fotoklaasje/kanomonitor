@@ -27,10 +27,9 @@ sqlite_create_table_kanos = '''CREATE TABLE KANOS
 #kanosooort is zeekano, vlakwater(wedstrijd) etc.
 
 sqlite_create_table_uitgeleend = '''CREATE TABLE UITGELEEND
-         (UITLEENID INT PRIMARY KEY   NOT NULL,
-         MAC        TEXT      NOT NULL,
-         STARTTIJD  timestamp NOT NULL,
-         EINDTIJD   timestamp NOT NULL
+         (STARTTIJD timestamp PRIMARY KEY   NOT NULL,
+         EINDTIJD timestamp NOT NULL,
+         MAC  TEXT NOT NULL
          );'''
 
 

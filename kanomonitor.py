@@ -39,7 +39,11 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     logger.debug(uitleentijd)
     logger.debug(terugbrengtijd)
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
-    
+    conn = sqlite3.connect('kanomonitor.db')
+    conn.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?)', (uitleentijd ,terugbrengtijd, mac_adres) )
+    conn.commit()
+    conn.close()
+
 #def check_uitgeleend():
     #twijfelgevalletje? kijk of er kano's zijn die al meer dan 10 min weg zijn, en schrijf dat dan ergens weg zodat live gekeken kan worden wat er nu weg is.
     #misschien dit niet in lokale database opslaan, maar alleen op database op internet? (om sd kaart te ontlasten)
