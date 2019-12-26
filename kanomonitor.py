@@ -28,7 +28,7 @@ def lees_maclijst():
     for e in cursor:
         maclijst.append(e[0])
     logger.debug(maclijst)
-
+    conn.close
 
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
