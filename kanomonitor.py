@@ -70,8 +70,8 @@ def maak_live_db():
     conn.close()
     conn_ramdisk.commit()
 
-def live_database_aanwezig(mac):
-    sqlite_update_mac_aanwezig = 'update aanwezig set aanwezig = "1" where mac = "' + mac + '";'
+def live_database_aanwezigheid(mac, status):
+    sqlite_update_mac_aanwezig = 'update aanwezig set aanwezig = "' + status + '" where mac = "' + mac + '";'
     conn_ramdisk.execute(sqlite_update_mac_aanwezig)
     conn_ramdisk.commit()
 
@@ -93,7 +93,7 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     conn.commit()
     conn.close()
     #ook in live database schrijven dat de kano er weer is.
-    live_database_aanwezig(mac_adres)
+    live_database_aanwezigheid(mac_adres, "1")
 
 #def check_uitgeleend():
     #twijfelgevalletje? kijk of er kano's zijn die al meer dan 10 min weg zijn, en schrijf dat dan ergens weg zodat live gekeken kan worden wat er nu weg is.
@@ -139,7 +139,7 @@ def my_process(data):
                     logger.debug(kanolijst)
                     logger.debug("----")
                     #melden als aanwezig in lived database
-                    live_database_aanwezig(gevonden_mac_adres)
+                    live_database_aanwezigheid(gevonden_mac_adres, "1")
     except Exception as ex:
         logger.debug(ex)
 
