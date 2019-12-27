@@ -25,6 +25,7 @@ conn_ramdisk = sqlite3.connect('/tmp/ramdisk/kanomonitor_live.db')
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
+    #moet dit periodiek? (en dan ook de liveDB updaten?
     logging.debug("maclijst lezen")
     conn = sqlite3.connect('kanomonitor.db')
     cursor = conn.execute('SELECT MAC FROM sensoren')
@@ -51,6 +52,8 @@ def maak_live_db():
     except Exception as x:
         logger.debug(x)
 
+
+def voeg_aan_live_db_toe():
     #kopieer kano's uit de echte database met meest recente mac adres
     sqlite_kano_meest_recente_mac = '''select s1.kanoid, mac, kanonaam, kanomerk, kanotype, kanosoort, vaargroep
         from sensoren s1
@@ -60,13 +63,25 @@ def maak_live_db():
               FROM sensoren s2
               WHERE s1.kanoid = s2.kanoid);'''
     conn = sqlite3.connect('kanomonitor.db')
+    cursor_ramdisk = conn_ramdisk.execute('select kanoid, mac from aanwezig')
+    ramdisk_lijst_id = []
+    ramdisk_lijst_mac = []
+    for row in cursor_ramdisk:
+        ramdisk_lijst_id.append(row[0])
+        ramdisk_lijst_mac.append(row[1])
     cursor = conn.execute(sqlite_kano_meest_recente_mac)
     for row in cursor:
-        #kopieer iedere rij in de nieuwe tabel
-        sqlite_invoegen_in_ramdisk = '''insert into aanwezig
+        if row[0] not in ramdisk_lijst_id:
+            logger.debug("rij toevoegen aan live database")
+            logger.debug(row[0])
+            sqlite_invoegen_in_ramdisk = '''insert into aanwezig
             (kanoid, mac, kanonaam, kanomerk, kanotype, kanosoort, vaargroep, aanwezig)
             values (?,?,?,?,?,?,?,?);'''
-        conn_ramdisk.execute(sqlite_invoegen_in_ramdisk, (row[0], row[1], row[2], row[3], row[4], row[5], row[6], "0"))
+            conn_ramdisk.execute(sqlite_invoegen_in_ramdisk, (row[0], row[1], row[2], row[3], row[4], row[5], row[6], "0"))
+        elif row[1] not in ramdisk_lijst_mac:
+            logger.debug("mac updaten naar nieuwste")
+            sqlite_update_mac = 'update aanwezig set mac = "' + row[1] + '" where kanoid = "' + row[0] + '";'
+            conn_ramdisk.execute(sqlite_update_mac)
     conn.close()
     conn_ramdisk.commit()
 
@@ -167,7 +182,8 @@ btctrl.process=my_process
 #kanolijst[0].append("00:00:00:00:00:00")
 #kanolijst[0][1] = datetime.now()
 lees_maclijst()
-maak_live_db()
+#maak_live_db()
+voeg_aan_live_db_toe()
 btctrl.send_scan_request()
 try:
     #event_loop.run_until_complete(event_loop.future)
