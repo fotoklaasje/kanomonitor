@@ -70,6 +70,11 @@ def maak_live_db():
     conn.close()
     conn_ramdisk.commit()
 
+def live_database_aanwezig(mac):
+    sqlite_update_mac_aanwezig = 'update aanwezig set aanwezig = "1" where mac = "' + mac + '";'
+    conn_ramdisk.execute(sqlite_update_mac_aanwezig)
+    conn_ramdisk.commit()
+
 @aiocron.crontab('* * * * *')
 async def aiocron_testje():
     logger.debug("aiocron test")
@@ -87,6 +92,8 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     conn.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?);', (uitleentijd ,terugbrengtijd, mac_adres) )
     conn.commit()
     conn.close()
+    #ook in live database schrijven dat de kano er weer is.
+    live_database_aanwezig(mac_adres)
 
 #def check_uitgeleend():
     #twijfelgevalletje? kijk of er kano's zijn die al meer dan 10 min weg zijn, en schrijf dat dan ergens weg zodat live gekeken kan worden wat er nu weg is.
@@ -132,9 +139,7 @@ def my_process(data):
                     logger.debug(kanolijst)
                     logger.debug("----")
                     #melden als aanwezig in lived database
-                    sqlite_update_mac_aanwezig = '''update aanwezig set aanwezig = "1" where mac = "''' + gevonden_mac_adres + '''";'''
-                    conn_ramdisk.execute(sqlite_update_mac_aanwezig)
-                    conn_ramdisk.commit()
+                    live_database_aanwezig(gevonden_mac_adres)
     except Exception as ex:
         logger.debug(ex)
 
