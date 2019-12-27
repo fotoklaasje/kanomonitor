@@ -27,12 +27,13 @@ def lees_maclijst():
     #lees de lijst met macs uit de database
     #moet dit periodiek? (en dan ook de liveDB updaten?
     logging.debug("maclijst lezen")
-    conn = sqlite3.connect('kanomonitor.db')
-    cursor = conn.execute('SELECT MAC FROM sensoren')
+    conn_db = sqlite3.connect('kanomonitor.db')
+    cursor = conn_db.execute('SELECT MAC FROM sensoren')
     for e in cursor:
-        maclijst.append(e[0])
+        if e[0] not in maclijst:
+            maclijst.append(e[0])
     logger.debug(maclijst)
-    conn.close
+    conn_db.close
 
 def maak_live_db():
     sqlite_create_table_aanwezig = '''CREATE TABLE AANWEZIG
@@ -40,7 +41,7 @@ def maak_live_db():
          MAC             TEXT NOT NULL,
          KANONAAM           TEXT NOT NULL,
          KANOMERK           TEXT NOT NULL,
-         KANOTYPE           TEXT NOT NULL, 
+         KANOTYPE           TEXT NOT NULL,
          KANOSOORT          TEXT NOT NULL,
          VAARGROEP          TEXT NOT NULL,
          AANWEZIG           INT NOT NULL
@@ -48,9 +49,8 @@ def maak_live_db():
     logger.debug("live db tabel wordt gemaakt")
     try:
         conn_ramdisk.execute("DELETE FROM aanwezig")
-        conn_ramdisk.execute(sqlite_create_table_aanwezig)
     except Exception as x:
-        logger.debug(x)
+        conn_ramdisk.execute(sqlite_create_table_aanwezig)
 
 
 def voeg_aan_live_db_toe():
@@ -62,14 +62,14 @@ def voeg_aan_live_db_toe():
 	WHERE  startdatum=(SELECT MAX(s2.startdatum)
               FROM sensoren s2
               WHERE s1.kanoid = s2.kanoid);'''
-    conn = sqlite3.connect('kanomonitor.db')
+    conn_db = sqlite3.connect('kanomonitor.db')
     cursor_ramdisk = conn_ramdisk.execute('select kanoid, mac from aanwezig')
     ramdisk_lijst_id = []
     ramdisk_lijst_mac = []
     for row in cursor_ramdisk:
         ramdisk_lijst_id.append(row[0])
         ramdisk_lijst_mac.append(row[1])
-    cursor = conn.execute(sqlite_kano_meest_recente_mac)
+    cursor = conn_db.execute(sqlite_kano_meest_recente_mac)
     for row in cursor:
         if row[0] not in ramdisk_lijst_id:
             logger.debug("rij toevoegen aan live database")
@@ -82,13 +82,18 @@ def voeg_aan_live_db_toe():
             logger.debug("mac updaten naar nieuwste")
             sqlite_update_mac = 'update aanwezig set mac = "' + row[1] + '" where kanoid = "' + row[0] + '";'
             conn_ramdisk.execute(sqlite_update_mac)
-    conn.close()
+    conn_db.close()
     conn_ramdisk.commit()
 
 def live_database_aanwezigheid(mac, status):
     sqlite_update_mac_aanwezig = 'update aanwezig set aanwezig = "' + status + '" where mac = "' + mac + '";'
     conn_ramdisk.execute(sqlite_update_mac_aanwezig)
     conn_ramdisk.commit()
+
+#@aiocron.crontab('*/15 * * * *')
+#async def ieder_kwartier_uitvoeren():
+#    voeg_aan_live_db_toe()
+#    lees_maclijst()
 
 @aiocron.crontab('* * * * *')
 async def aiocron_testje():
@@ -103,10 +108,10 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     logger.debug(uitleentijd)
     logger.debug(terugbrengtijd)
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
-    conn = sqlite3.connect('kanomonitor.db')
-    conn.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?);', (uitleentijd ,terugbrengtijd, mac_adres) )
-    conn.commit()
-    conn.close()
+    conn_db = sqlite3.connect('kanomonitor.db')
+    conn_db.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?);', (uitleentijd ,terugbrengtijd, mac_adres) )
+    conn_db.commit()
+    conn_db.close()
     #ook in live database schrijven dat de kano er weer is.
     live_database_aanwezigheid(mac_adres, "1")
 
@@ -182,7 +187,7 @@ btctrl.process=my_process
 #kanolijst[0].append("00:00:00:00:00:00")
 #kanolijst[0][1] = datetime.now()
 lees_maclijst()
-#maak_live_db()
+maak_live_db()
 voeg_aan_live_db_toe()
 btctrl.send_scan_request()
 try:
