@@ -47,7 +47,7 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
 #def check_uitgeleend():
     #twijfelgevalletje? kijk of er kano's zijn die al meer dan 10 min weg zijn, en schrijf dat dan ergens weg zodat live gekeken kan worden wat er nu weg is.
     #misschien dit niet in lokale database opslaan, maar alleen op database op internet? (om sd kaart te ontlasten)
-
+    #kan ook in een lokale database in geheugen. 
 
 def my_process(data):
     global opts
