@@ -21,6 +21,8 @@ maclijst = [] #macs in de database
 kanolijst = {} #dictionary mac als key, en datetime laatste gezien
 UitleenMinimum = timedelta(minutes=1)
 
+conn_ramdisk = sqlite3.connect('/tmp/ramdisk/kanomonitor_live.db')  
+
 def lees_maclijst():
     #lees de lijst met macs uit de database
     logging.debug("maclijst lezen")
@@ -31,9 +33,46 @@ def lees_maclijst():
     logger.debug(maclijst)
     conn.close
 
+def maak_live_db():
+    sqlite_create_table_aanwezig = '''CREATE TABLE AANWEZIG
+         (KANOID TEXT PRIMARY KEY   NOT NULL,
+         MAC             TEXT NOT NULL,
+         KANONAAM           TEXT NOT NULL,
+         KANOMERK           TEXT NOT NULL,
+         KANOTYPE           TEXT NOT NULL, 
+         KANOSOORT          TEXT NOT NULL,
+         VAARGROEP          TEXT NOT NULL,
+         AANWEZIG           INT NOT NULL
+	 );'''
+    logger.debug("live db tabel wordt gemaakt")
+    try:
+        conn_ramdisk.execute("DELETE FROM aanwezig")
+        conn_ramdisk.execute(sqlite_create_table_aanwezig)
+    except Exception as x:
+        logger.debug(x)
+
+    #kopieer kano's uit de echte database met meest recente mac adres
+    sqlite_kano_meest_recente_mac = '''select s1.kanoid, mac, kanonaam, kanomerk, kanotype, kanosoort, vaargroep
+        from sensoren s1
+	join kanos
+	on s1.kanoid = kanos.kanoid
+	WHERE  startdatum=(SELECT MAX(s2.startdatum)
+              FROM sensoren s2
+              WHERE s1.kanoid = s2.kanoid);'''
+    conn = sqlite3.connect('kanomonitor.db')
+    cursor = conn.execute(sqlite_kano_meest_recente_mac)
+    for row in cursor:
+        #kopieer iedere rij in de nieuwe tabel
+        sqlite_invoegen_in_ramdisk = '''insert into aanwezig
+            (kanoid, mac, kanonaam, kanomerk, kanotype, kanosoort, vaargroep, aanwezig)
+            values (?,?,?,?,?,?,?,?);'''
+        conn_ramdisk.execute(sqlite_invoegen_in_ramdisk, (row[0], row[1], row[2], row[3], row[4], row[5], row[6], "0"))
+    conn.close()
+    conn_ramdisk.commit()
+
 @aiocron.crontab('* * * * *')
 async def aiocron_testje():
-    print("aiocron test")
+    logger.debug("aiocron test")
 
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
@@ -45,7 +84,7 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     logger.debug(terugbrengtijd)
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
     conn = sqlite3.connect('kanomonitor.db')
-    conn.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?)', (uitleentijd ,terugbrengtijd, mac_adres) )
+    conn.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?);', (uitleentijd ,terugbrengtijd, mac_adres) )
     conn.commit()
     conn.close()
 
@@ -86,12 +125,16 @@ def my_process(data):
                     logger.debug(gevonden_mac_adres)
                     logger.debug(kanolijst[gevonden_mac_adres])
                 else:
+                    #voeg mac toe aan kanolijst met nu als laatste datum  
                     logger.debug("voeg toe aan kanolijst")
                     kanolijst[gevonden_mac_adres]=datetime.now()
                     logger.debug("----")
                     logger.debug(kanolijst)
                     logger.debug("----")
-                    #voeg mac toe aan kanolijst met nu als laatste datum
+                    #melden als aanwezig in lived database
+                    sqlite_update_mac_aanwezig = '''update aanwezig set aanwezig = "1" where mac = "''' + gevonden_mac_adres + '''";'''
+                    conn_ramdisk.execute(sqlite_update_mac_aanwezig)
+                    conn_ramdisk.commit()
     except Exception as ex:
         logger.debug(ex)
 
@@ -119,6 +162,7 @@ btctrl.process=my_process
 #kanolijst[0].append("00:00:00:00:00:00")
 #kanolijst[0][1] = datetime.now()
 lees_maclijst()
+maak_live_db()
 btctrl.send_scan_request()
 try:
     #event_loop.run_until_complete(event_loop.future)
@@ -130,5 +174,6 @@ finally:
     btctrl.stop_scan_request()
     command = aiobs.HCI_Cmd_LE_Advertise(enable=False)
     btctrl.send_command(command)
+    conn_ramdisk.close()
     conn.close()
     event_loop.close()
