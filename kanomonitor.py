@@ -6,6 +6,7 @@
 
 import sys
 import asyncio
+import aiocron
 import argparse
 import re
 import aioblescan as aiobs
@@ -29,6 +30,10 @@ def lees_maclijst():
         maclijst.append(e[0])
     logger.debug(maclijst)
     conn.close
+
+@aiocron.crontab('* * * * *')
+async def aiocron_testje():
+    print("aiocron test")
 
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
