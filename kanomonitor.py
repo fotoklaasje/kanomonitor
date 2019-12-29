@@ -19,6 +19,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 maclijst = [] #macs in de database
 kanolijst = {} #dictionary mac als key, en datetime laatste gezien
+LiveTijd = timedelta(minutes=1)
 UitleenMinimum = timedelta(minutes=1)
 
 conn_ramdisk = sqlite3.connect('/tmp/ramdisk/kanomonitor_live.db')  
@@ -97,14 +98,21 @@ def wegtijd_verstreken(mac, tijdsduur):
     else:
         return False
 
-#@aiocron.crontab('*/15 * * * *')
-#async def ieder_kwartier_uitvoeren():
-#    voeg_aan_live_db_toe()
-#    lees_maclijst()
+@aiocron.crontab('*/15 * * * *')
+async def ieder_kwartier_uitvoeren():
+    voeg_aan_live_db_toe()
+    lees_maclijst()
 
 @aiocron.crontab('* * * * *')
-async def aiocron_testje():
-    logger.debug("aiocron test")
+async def aanwezigheid_live_checken():
+    logger.debug("live_aanwezigheid_update")
+    for mac in kanolijst:
+        if  wegtijd_verstreken(mac,LiveTijd):
+            try:
+                live_database_aanwezigheid(mac, "0")
+            except Exception as x:
+                logger.debug(x)
+
 
 #def vandaaggezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
@@ -122,10 +130,6 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     #ook in live database schrijven dat de kano er weer is.
     live_database_aanwezigheid(mac_adres, "1")
 
-#def check_uitgeleend():
-    #twijfelgevalletje? kijk of er kano's zijn die al meer dan 10 min weg zijn, en schrijf dat dan ergens weg zodat live gekeken kan worden wat er nu weg is.
-    #misschien dit niet in lokale database opslaan, maar alleen op database op internet? (om sd kaart te ontlasten)
-    #kan ook in een lokale database op een ramdisk. 
 
 def my_process(data):
     global opts
