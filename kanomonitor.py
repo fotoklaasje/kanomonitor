@@ -113,9 +113,17 @@ async def aanwezigheid_live_checken():
             except Exception as x:
                 logger.debug(x)
 
-
-#def vandaaggezien():
+@aiocron.crontab('59 23 * * *')
+#@aiocron.crontab('* * * * *')
+async def laatst_gezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
+    logger.debug("vandaag gezien")
+    conn_db = sqlite3.connect('kanomonitor.db')
+    for mac in kanolijst:
+        logger.debug(kanolijst[mac])
+        conn_db.execute('update sensoren set laatstgezien = ? where mac = ?;', (kanolijst[mac],mac))
+    conn_db.commit()
+    conn_db.close()
 
 def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     logger.debug("leg vast in database, uitgeleend: ")
