@@ -135,8 +135,6 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     conn_db.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?);', (uitleentijd ,terugbrengtijd, mac_adres) )
     conn_db.commit()
     conn_db.close()
-    #ook in live database schrijven dat de kano er weer is.
-    live_database_aanwezigheid(mac_adres, "1")
 
 
 def my_process(data):
@@ -158,8 +156,10 @@ def my_process(data):
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     TijdNu = datetime.now()
                     if wegtijd_verstreken(gevonden_mac_adres, UitleenMinimum):
-                        logger.debug("meer dan 10 min/uitleenminimum geleden")
+                        logger.debug("meer dan 'uitleenminimum' geleden")
                         schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], datetime.now())
+                        #ook in live database schrijven dat de kano er weer is.
+                        live_database_aanwezigheid(gevonden_mac_adres, "1")
                     #update laatste datum
                     kanolijst[gevonden_mac_adres] = TijdNu
                     logger.debug("entry update")
