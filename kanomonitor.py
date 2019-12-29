@@ -141,7 +141,6 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
 
 def my_process(data):
     global opts
-
     ev=aiobs.HCI_Event()
     xx=ev.decode(data)
     try:
