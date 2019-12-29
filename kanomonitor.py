@@ -91,6 +91,12 @@ def live_database_aanwezigheid(mac, status):
     conn_ramdisk.execute(sqlite_update_mac_aanwezig)
     conn_ramdisk.commit()
 
+def wegtijd_verstreken(mac, tijdsduur):
+    if datetime.now() - kanolijst[mac] > tijdsduur:
+        return True
+    else:
+        return False
+
 #@aiocron.crontab('*/15 * * * *')
 #async def ieder_kwartier_uitvoeren():
 #    voeg_aan_live_db_toe()
@@ -144,9 +150,9 @@ def my_process(data):
                     #kijk wanneer laatste datum
                     #als laatste datum meer dan 10 min geleden doe schrijf_uitgeleend
                     TijdNu = datetime.now()
-                    if TijdNu - kanolijst[gevonden_mac_adres] > UitleenMinimum:
+                    if wegtijd_verstreken(gevonden_mac_adres, UitleenMinimum):
                         logger.debug("meer dan 10 min/uitleenminimum geleden")
-                        schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], TijdNu)
+                        schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], datetime.now())
                     #update laatste datum
                     kanolijst[gevonden_mac_adres] = TijdNu
                     logger.debug("entry update")
