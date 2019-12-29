@@ -79,7 +79,7 @@ def voeg_aan_live_db_toe():
             values (?,?,?,?,?,?,?,?);'''
             conn_ramdisk.execute(sqlite_invoegen_in_ramdisk, (row[0], row[1], row[2], row[3], row[4], row[5], row[6], "0"))
         #als de kano een nieuwe sensor heeft gekregen
-	elif row[1] not in ramdisk_lijst_mac:
+        elif row[1] not in ramdisk_lijst_mac:
             logger.debug("mac updaten naar nieuwste")
             sqlite_update_mac = 'update aanwezig set mac = "' + row[1] + '" where kanoid = "' + row[0] + '";'
             conn_ramdisk.execute(sqlite_update_mac)
