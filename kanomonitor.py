@@ -144,10 +144,6 @@ def my_process(data):
 
     ev=aiobs.HCI_Event()
     xx=ev.decode(data)
-    #ev.show(0)
-    
-    # dit moet mooier kunnen met een functie die recursief door de lists naar .name = peer zoekt (inspiratie https://thispointer.com/python-convert-list-of-lists-or-nested-list-to-flat-list/ )
-    # onderstaande manier met ev.retrieve werkt eleganter maar bied geen manier om major en minor te lezen
     try:
         mac = ev.retrieve("peer")
         for x in mac:
@@ -197,14 +193,7 @@ conn,btctrl = event_loop.run_until_complete(fac)
 #Attach your processing
 btctrl.process=my_process
 
-#als we dagelijks willen kijken of bepaalde kano's al lang niet gezien zijn (batterij leeg?) dan kan dat met aiocron https://github.com/gawel/aiocron
-#ook goed om periodiek lijst met MAC's op te halen die geregistreerd moeten worden (zodat niet elke passant in de database beland)
 
-#Probe
-
-#print(datetime.now())
-#kanolijst[0].append("00:00:00:00:00:00")
-#kanolijst[0][1] = datetime.now()
 lees_maclijst()
 maak_live_db()
 voeg_aan_live_db_toe()
