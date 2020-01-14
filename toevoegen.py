@@ -14,7 +14,8 @@ print ("Opened database successfully")
 
 #toevoegen = "INSERT INTO SENSOREN (MAC, KANOID, STARTDATUM) VALUES (\"a8:1b:6a:ae:71:9f\", 1 , \"" + datetime.datetime.now + "\")"
 
-conn.execute('insert into sensoren(MAC, KANOID, STARTDATUM) VALUES(?, ?, ?)', ("a8:1b:6a:ae:71:9f",1 , datetime.datetime.now() ) )
+#conn.execute('insert into sensoren(MAC, KANOID, STARTDATUM) VALUES(?, ?, ?)', ("a8:1b:6a:ae:71:9f",1 , datetime.datetime.now() ) )
+conn.execute('insert into sensoren(MAC, KANOID, STARTDATUM) VALUES(?, ?, ?)', ("d8:1c:79:db:c2:75",1 , datetime.datetime.now() ) )
 
 conn.commit()
 conn.close()
