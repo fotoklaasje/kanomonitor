@@ -1,0 +1,10 @@
+[Unit]
+Description=Kanomonitor backend
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/kanomonitor/kanomonitor.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
