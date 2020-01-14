@@ -21,3 +21,8 @@ tmpfs /tmp/ramdisk tmpfs nosuid,nodev,noatime,size=20M 0 0
 
 git clone https://github.com/fotoklaasje/kanomonitor.git
 sudo python3 maak_database.py
+
+copy KanomonitorBackend.service to /lib/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable KanomonitorBackend
+sudo systemctl start KanomonitorBackend
