@@ -16,19 +16,20 @@ from datetime import timedelta
 import logging
 import sqlite3
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 maclijst = [] #macs in de database
 kanolijst = {} #dictionary mac als key, en datetime laatste gezien
 LiveTijd = timedelta(minutes=1)
 UitleenMinimum = timedelta(minutes=1)
 
 conn_ramdisk = sqlite3.connect('/tmp/ramdisk/kanomonitor_live.db')  
+kano_database_bestand = '/home/pi/kanomonitor/kanomonitor.db'
 
 def lees_maclijst():
     #lees de lijst met macs uit de database
     #moet dit periodiek? (en dan ook de liveDB updaten?
     logging.debug("maclijst lezen")
-    conn_db = sqlite3.connect('kanomonitor.db')
+    conn_db = sqlite3.connect(kano_database_bestand)
     cursor = conn_db.execute('SELECT MAC FROM sensoren')
     for e in cursor:
         if e[0] not in maclijst:
@@ -63,7 +64,7 @@ def voeg_aan_live_db_toe():
 	WHERE  startdatum=(SELECT MAX(s2.startdatum)
               FROM sensoren s2
               WHERE s1.kanoid = s2.kanoid);'''
-    conn_db = sqlite3.connect('kanomonitor.db')
+    conn_db = sqlite3.connect(kano_database_bestand)
     cursor_ramdisk = conn_ramdisk.execute('select kanoid, mac from aanwezig')
     ramdisk_lijst_id = []
     ramdisk_lijst_mac = []
@@ -118,7 +119,7 @@ async def aanwezigheid_live_checken():
 async def laatst_gezien():
     #schrijf voor alle kano's die vandaag gezien zijn mac adres en datum vandaag in de database
     logger.debug("vandaag gezien")
-    conn_db = sqlite3.connect('kanomonitor.db')
+    conn_db = sqlite3.connect()
     for mac in kanolijst:
         logger.debug(kanolijst[mac])
         conn_db.execute('update sensoren set laatstgezien = ? where mac = ?;', (kanolijst[mac],mac))
@@ -131,7 +132,7 @@ def schrijf_uitgeleend(mac_adres, uitleentijd, terugbrengtijd):
     logger.debug(uitleentijd)
     logger.debug(terugbrengtijd)
     # aanroepen als de kano terug gebracht is. schrijf in de database uitleentijd en terugbrengtijd
-    conn_db = sqlite3.connect('kanomonitor.db')
+    conn_db = sqlite3.connect(kano_database_bestand)
     conn_db.execute('insert into uitgeleend (STARTTIJD, EINDTIJD, MAC) VALUES(?, ?, ?);', (uitleentijd ,terugbrengtijd, mac_adres) )
     conn_db.commit()
     conn_db.close()
@@ -159,7 +160,7 @@ def my_process(data):
                         logger.debug("meer dan 'uitleenminimum' geleden")
                         schrijf_uitgeleend(gevonden_mac_adres, kanolijst[gevonden_mac_adres], datetime.now())
                         #ook in live database schrijven dat de kano er weer is.
-                        live_database_aanwezigheid(gevonden_mac_adres, "1")
+                    live_database_aanwezigheid(gevonden_mac_adres, "1")
                     #update laatste datum
                     kanolijst[gevonden_mac_adres] = TijdNu
                     logger.debug("entry update")

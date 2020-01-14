@@ -15,8 +15,14 @@ print ("Opened database successfully")
 #toevoegen = "INSERT INTO SENSOREN (MAC, KANOID, STARTDATUM) VALUES (\"a8:1b:6a:ae:71:9f\", 1 , \"" + datetime.datetime.now + "\")"
 
 #conn.execute('insert into sensoren(MAC, KANOID, STARTDATUM) VALUES(?, ?, ?)', ("a8:1b:6a:ae:71:9f",1 , datetime.datetime.now() ) )
-conn.execute('insert into sensoren(MAC, KANOID, STARTDATUM) VALUES(?, ?, ?)', ("d8:1c:79:db:c2:75",1 , datetime.datetime.now() ) )
+conn.execute('insert into sensoren(MAC, KANOID, STARTDATUM) VALUES(?, ?, ?)', ("f0:99:19:4b:28:81",1 , datetime.datetime.now() ) )
 
 conn.commit()
 conn.close()
 
+conn = sqlite3.connect('kanomonitor.db')
+
+print ("Opened database successfully")
+#conn.execute('insert into kanos(kanoid, kanonaam, kanomerk, kanotype, kanosoort, vaargroep) VALUES(?, ?, ?,?,?,?)', (1,"zv1", "northshore", "shoreline", "zeekano", "zeegroep") )
+conn.commit()
+conn.close()
